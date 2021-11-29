@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     Bitmap takenImage;
     byte[] byteArray;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,25 +55,16 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this,"Button Clicked",Toast.LENGTH_LONG).show();
 
                 Intent takePictureIntent = new Intent("android.media.action.IMAGE_CAPTURE");
                 try {
-                    MainActivityKt.access$setPhotoFile$p(MainActivity.this.getPhotoFile("photo.jpg"));
+                    ImagePickT.access$setPhotoFile$p(MainActivity.this.getPhotoFile("photo.jpg"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Uri fileProvider = FileProvider.getUriForFile((Context)MainActivity.this, "edu.stanford.pandey.fileprovide", MainActivityKt.access$getPhotoFile$p());
+                Uri fileProvider = FileProvider.getUriForFile((Context)MainActivity.this, "edu.stanford.pandey.fileprovide", ImagePickT.access$getPhotoFile$p());
                 takePictureIntent.putExtra("output", (Parcelable)fileProvider);
-
-
-                // if (takePictureIntent.resolveActivity(DocumentVerificationActivity.this.getPackageManager()) != null) {
                 MainActivity.this.startActivityForResult(takePictureIntent, 42);
-                /*} else {
-                    Toast.makeText((Context)DocumentVerificationActivity.this, (CharSequence)"Unable to open camera", Toast.LENGTH_LONG).show();
-                }*/
-
-
 
             }
         });
@@ -82,47 +74,39 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-       // super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("getTemp==","getcode");
-        Log.d("getTemp==",resultCode+"  v");
-        Log.d("getTemp==",requestCode+"  vgg");
         if (requestCode == 42 && resultCode == -1) {
-            takenImage = BitmapFactory.decodeFile(MainActivityKt.access$getPhotoFile$p().getAbsolutePath());
-
-            Log.d("getTemp==","fist");
+            takenImage = BitmapFactory.decodeFile(ImagePickT.access$getPhotoFile$p().getAbsolutePath());
 
             img_show.setImageBitmap(takenImage);
             final Uri tempUri = getImageUri(MainActivity.this, takenImage);
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             takenImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byteArray = stream.toByteArray();
-
-
             Handler handler = new Handler();
-            Log.d("getTemp==","second");
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    Log.d("getTemp==","third");
-                   // UploadImage(tempUri);
-                    Log.d("getTemp==",tempUri+"");
+                    UploadImage(tempUri);
+
 
                 }
             }, 2000);
-            Log.d("getTemp==","fourth");
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
-            Log.d("getTemp==","fifth");
         }
 
 
     }
 
+    private void UploadImage(Uri tempUri) {
 
-    public static final class MainActivityKt {
-        private static final String FILE_NAME = "photo.jpg";
-        private static final int REQUEST_CODE = 42;
+        //upload image to server
+
+    }
+
+
+    public static final class ImagePickT {
         private static File photoFile;
 
         // $FF: synthetic method
@@ -135,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
             return var10000;
         }
 
-        // $FF: synthetic method
         public static final void access$setPhotoFile$p(File var0) {
             photoFile = var0;
         }
@@ -145,12 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        // inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        //153 204
         Log.e("Dimensions", inImage.getWidth() + " " + inImage.getHeight());
-        // /storage/emulated/0/DCIM/Camera/temp/IMG20210409150148.jpg
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        Log.e("getpath===",Uri.parse(path)+"");
         return Uri.parse(path);
     }
 
@@ -161,57 +140,5 @@ public class MainActivity extends AppCompatActivity {
         Intrinsics.checkExpressionValueIsNotNull(var10000, "File.createTempFile(file…\".jpg\", storageDirectory)");
         return var10000;
     }
-
-
-    private void showCustomDialog() {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-        dialog.setContentView(R.layout.dialog_select);
-        dialog.setCancelable(false);
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        // ((TextView) dialog.findViewById(R.id.title)).setText(p.name);
-        // ((CircleImageView) dialog.findViewById(R.id.image)).setImageResource(p.image);
-
-        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-
-            }
-        });
-
-        ((AppCompatButton) dialog.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-               /* Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);*/
-
-
-            }
-        });
-
-        ((AppCompatButton) dialog.findViewById(R.id.bt_login)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-               /* Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);*/
-            }
-        });
-
-        dialog.show();
-        dialog.getWindow().setAttributes(lp);
-    }
-
-
-
 
 }

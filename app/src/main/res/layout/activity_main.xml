@@ -9,14 +9,18 @@
     tools:context=".MainActivity">
 
 
-    <ImageView
-        android:id="@+id/img_show"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="10dp"
-        android:src="@drawable/ic_launcher_background"/>
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/img_show"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_launcher_background"/>
 
         <Button
+            android:layout_alignBottom="@+id/img_show"
             android:id="@+id/btn_picker"
             android:textSize="18dp"
             android:text="Pick"
@@ -25,6 +29,11 @@
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+
+
 
 
 </LinearLayout>
